@@ -2,7 +2,7 @@
  * @Author: Xudong0722
  * @Date: 2024-09-08 13:26:10
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-09-08 14:20:44
+ * @Last Modified time: 2024-09-08 22:18:01
  */
 
 #include "Epoll.h"
@@ -34,7 +34,7 @@ void Epoll::add_fd(int fd, uint32_t op)
 {
     struct kevent ev;
     bzero(&ev, sizeof(ev));
-    EV_SET(&ev, fd, EVFILT_READ, EV_ADD | EV_ENABLE, 0, 0, (void *)(intptr_t)fd);
+    EV_SET(&ev, fd, EVFILT_READ, op, 0, 0, (void *)(intptr_t)fd);
     int r = kevent(epfd_, &ev, 1, NULL, 0, NULL);
     errif(r, "kevent failed.");
 }

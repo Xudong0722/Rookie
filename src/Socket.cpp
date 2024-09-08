@@ -2,7 +2,7 @@
  * @Author: Xudong0722
  * @Date: 2024-09-08 12:49:44
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-09-08 13:25:28
+ * @Last Modified time: 2024-09-08 23:01:24
  */
 
 #include "Socket.h"
@@ -28,7 +28,7 @@ Socket::~Socket() = default;
 void Socket::bind(InetAddr *addr_info)
 {
     errif(NULL == addr_info, "addr_info is nullptr");
-    errif(::bind(fd_, (sockaddr *)addr_info, sizeof(addr_info)) == -1, "bind socket failed.");
+    errif(::bind(fd_, (sockaddr *)addr_info, addr_info->addr_len_) == -1, "bind socket failed.");
 }
 
 void Socket::listen()

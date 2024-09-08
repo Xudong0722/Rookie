@@ -2,7 +2,7 @@
  * @Author: Xudong0722
  * @Date: 2024-09-01 12:57:55
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-09-01 14:03:23
+ * @Last Modified time: 2024-09-03 23:38:30
  */
 #include <iostream>
 #include <sys/socket.h>
@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include "util.h"
 
+#define BUFFER_SIZE 1024
 int main()
 {
     int sockfd = socket(AF_INET, SOCK_STREAM, 0); // IPV4, 数据流格式, 协议类型-0表示自动推导
@@ -27,7 +28,7 @@ int main()
 
     while (true)
     {
-        char buf[1024];
+        char buf[BUFFER_SIZE];
         bzero(&buf, sizeof(buf));
 
         scanf("%s", buf);

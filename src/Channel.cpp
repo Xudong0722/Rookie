@@ -2,13 +2,14 @@
  * @Author: Xudong0722
  * @Date: 2024-09-09 15:25:45
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-09-09 17:25:22
+ * @Last Modified time: 2024-09-09 23:20:06
  */
 #include "Channel.h"
 #include "Epoll.h"
+#include "EventLoop.h"
 
-Channel::Channel(Epoll *ep, int fd)
-    : ep_(ep), fd_(fd)
+Channel::Channel(EventLoop *event_loop, int fd)
+    : event_loop_(event_loop), fd_(fd)
 {
 }
 
@@ -19,7 +20,12 @@ Channel::~Channel()
 void Channel::enable_reading()
 {
     events_ = EV_ADD | EV_ENABLE;
-    ep_->update_channel(this);
+    event_loop_->update_channel(this);
+}
+
+void Channel::handle_event()
+{
+    cb_();
 }
 
 int Channel::get_fd()
@@ -50,4 +56,11 @@ bool Channel::in_epoll() const
 void Channel::set_in_epoll(bool is_in_epoll)
 {
     is_in_epoll_ = is_in_epoll;
+}
+
+void Channel::set_callback(std::function<void()> cb)
+{
+    if (nullptr == cb)
+        return;
+    cb_ = cb;
 }

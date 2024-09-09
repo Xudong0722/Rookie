@@ -2,12 +2,13 @@
  * @Author: Xudong0722
  * @Date: 2024-09-01 12:57:41
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-09-08 23:02:55
+ * @Last Modified time: 2024-09-09 19:14:54
  */
 #include "Socket.h"
 #include "InetAddr.h"
 #include "Epoll.h"
 #include "util.h"
+#include "Channel.h"
 #include <unistd.h>
 
 #define READ_BUFFER 1024
@@ -56,17 +57,22 @@ int main()
     Epoll *epfd = new Epoll;
     server_sock->set_non_blocking();
 
-    epfd->add_fd(server_sock->get_fd(), EV_ADD | EV_ENABLE);
-
+    Channel *server_channel = new Channel(epfd, server_sock->get_fd());
+    server_channel->enable_reading();
     while (true)
     {
-        auto active_events = epfd->wait(30);
-        int n = active_events.size();
+        auto active_channels = epfd->wait(30);
+        int n = active_channels.size();
         printf("active events: %d\n", n);
         for (int i = 0; i < n; ++i)
         {
-            int fd = (int)(intptr_t)active_events[i].udata;
-            int event = active_events[i].filter;
+            if (nullptr == active_channels[i])
+            {
+                printf("channel is nullptr\n");
+                continue;
+            }
+            int fd = active_channels[i]->get_fd();
+            uint32_t event = active_channels[i]->get_revents();
             printf("event: %d, fd:%d\n", event, fd);
             if (event == EVFILT_READ)
             {
@@ -76,7 +82,10 @@ int main()
                     Socket *new_client_sock = new Socket(server_sock->accept(new_client_addr));
 
                     printf("new client fd %d! IP: %s Port: %d\n", new_client_sock->get_fd(), inet_ntoa(new_client_addr->addr_info_.sin_addr), ntohs(new_client_addr->addr_info_.sin_port));
-                    epfd->add_fd(new_client_sock->get_fd(), EV_ADD | EV_ENABLE);
+                    new_client_sock->set_non_blocking();
+                    Channel *new_client_channel = new Channel(epfd, new_client_sock->get_fd());
+                    new_client_channel->enable_reading();
+                    // epfd->add_fd(new_client_sock->get_fd(), EV_ADD | EV_ENABLE, server_channel);
                 }
                 else
                 {

@@ -2,7 +2,7 @@
  * @Author: Xudong0722
  * @Date: 2024-09-09 22:31:18
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-09-09 23:11:05
+ * @Last Modified time: 2024-09-18 18:01:24
  */
 #pragma once
 
@@ -10,6 +10,8 @@
 
 class EventLoop;
 class Socket;
+class Acceptor;
+
 class Server
 {
 public:
@@ -21,4 +23,5 @@ public:
 
 private:
     EventLoop *event_loop_;
+    Acceptor *acceptor_;
 };

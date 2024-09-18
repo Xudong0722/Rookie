@@ -3,7 +3,7 @@
  * @Author: Xudong0722
  * @Date: 2024-09-18 17:25:28
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-09-18 17:59:32
+ * @Last Modified time: 2024-09-18 20:08:39
  */
 
 #include "Acceptor.h"
@@ -37,7 +37,13 @@ Acceptor::~Acceptor()
 
 void Acceptor::accept_connection()
 {
-    new_connection_callback_(sock_);
+    InetAddr *new_client_addr = new InetAddr;
+    Socket *new_client_sock = new Socket(sock_->accept(new_client_addr));
+
+    printf("new client fd %d! IP: %s Port: %d\n", new_client_sock->get_fd(), inet_ntoa(new_client_addr->addr_info_.sin_addr), ntohs(new_client_addr->addr_info_.sin_port));
+    new_client_sock->set_non_blocking();
+    new_connection_callback_(new_client_sock);
+    delete new_client_addr;
 }
 
 void Acceptor::set_new_connection_callback(std::function<void(Socket *)> cb)

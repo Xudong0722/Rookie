@@ -6,7 +6,11 @@ server:
 	src/Socket.cpp src/Channel.cpp \
 	src/EventLoop.cpp src/Acceptor.cpp \
 	src/Connection.cpp \
+	src/ThreadPool.cpp \
 	server.cpp -o server -std=c++17
 
 clean:
 	rm server && rm client
+
+threadTest:
+	g++ src/ThreadPool.cpp  ThreadPoolTest.cpp -o ThreadPoolTest -std=c++17

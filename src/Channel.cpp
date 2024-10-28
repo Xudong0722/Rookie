@@ -2,7 +2,7 @@
  * @Author: Xudong0722
  * @Date: 2024-09-09 15:25:45
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-09-09 23:20:06
+ * @Last Modified time: 2024-10-28 18:20:18
  */
 #include "Channel.h"
 #include "Epoll.h"
@@ -25,7 +25,8 @@ void Channel::enable_reading()
 
 void Channel::handle_event()
 {
-    cb_();
+    // cb_();
+    event_loop_->add_task(cb_);
 }
 
 int Channel::get_fd()

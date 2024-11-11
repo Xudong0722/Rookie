@@ -1,10 +1,12 @@
-#include "ThreadPool.h"
 /*
  * @Author: Xudong0722
  * @Date: 2024-09-19 23:43:43
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-10-28 18:27:14
+ * @Last Modified time: 2024-11-10 17:25:02
  */
+
+#include "ThreadPool.h"
+#include <iostream>
 
 ThreadPool::ThreadPool(int size)
     : stop_(false)
@@ -22,7 +24,7 @@ ThreadPool::ThreadPool(int size)
                         return stop_ || !tasks_.empty();
                     });
                     if(stop_ && tasks_.empty()) return ;
-                    task = tasks_.front();
+                    task = std::move(tasks_.front());
                     tasks_.pop();
                 }
                 task();
@@ -48,6 +50,7 @@ ThreadPool::~ThreadPool()
 
 void ThreadPool::add(std::function<void()> task)
 {
+    std::cout << __FUNCTION__ << std::endl;
     {
         std::unique_lock<std::mutex> lock(tasks_mutex_);
         if (stop_)

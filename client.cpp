@@ -2,7 +2,7 @@
  * @Author: Xudong0722
  * @Date: 2024-09-01 12:57:55
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-11-12 01:16:09
+ * @Last Modified time: 2024-11-12 21:03:54
  */
 #include "src/util.h"
 #include "src/Buffer.h"
@@ -28,7 +28,7 @@ int main()
     // errif(connect(sockfd, (sockaddr *)&server_addr, sizeof(server_addr)), "connect server failed.");
 
     Socket *sock = new Socket();
-    InetAddr *server_addr = new InetAddr("127.0.0.1", 1234);
+    InetAddr *server_addr = new InetAddr("127.0.0.1", 8888);
     sock->connect(server_addr);
 
     int sockfd = sock->get_fd();

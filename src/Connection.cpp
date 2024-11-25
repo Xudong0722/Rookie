@@ -13,6 +13,7 @@
 #include "util.h"
 #include <string.h>
 #include <unistd.h>
+#include <iostream>
 
 #define READ_BUFFER 1024
 
@@ -40,7 +41,7 @@ void Connection::echo(int sockfd)
     {
         bzero(&buf, sizeof(buf));
         ssize_t bytes_read = read(sockfd, buf, sizeof(buf));
-
+        std::cout << __PRETTY_FUNCTION__ << " " << bytes_read << std::endl;
         if (bytes_read > 0)
         {
             printf("message from client fd: %d, message: %s\n", sockfd, buf);

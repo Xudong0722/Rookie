@@ -24,4 +24,5 @@ util.h
 
 # function
 
-sever会初始化一个事件循环器，
+sever会初始化一个事件循环器，事件循环中会监听各种sokcet事件如新的连接，数据接收等
+

@@ -20,7 +20,7 @@ public:
     Epoll();
     ~Epoll();
 
-    void add_fd(int fd, uint32_t op, Channel *channel);
+    // void add_fd(int fd, uint32_t op, Channel *channel);
     void update_channel(Channel *channel);
     std::vector<Channel *> wait(int timeout = -1);
 };

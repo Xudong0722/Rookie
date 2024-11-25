@@ -56,7 +56,7 @@ int Socket::accept(InetAddr *addr_info)
     bzero(&addr, sizeof(addr));
     errif(NULL == addr_info, "addr_info is nullptr.");
     int new_client_sockfd = ::accept(fd_, (sockaddr *)&addr, &addr_len);
-    errif(new_client_sockfd == -1, "Socket accept error.");
+    errif(new_client_sockfd == -1, "Socket accept error....");
     addr_info->set_inet_addr(addr, addr_len);
     return new_client_sockfd;
 }

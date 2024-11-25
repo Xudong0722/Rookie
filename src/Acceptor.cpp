@@ -20,7 +20,7 @@ Acceptor::Acceptor(EventLoop *loop)
 
     sock_->bind(addr_);
     sock_->listen();
-    sock_->set_non_blocking();
+    // sock_->set_non_blocking();
     accept_channel_ = new Channel(loop_, sock_->get_fd());
 
     std::function<void()> cb = std::bind(&Acceptor::accept_connection, this);

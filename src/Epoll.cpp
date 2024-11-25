@@ -32,14 +32,14 @@ Epoll::~Epoll()
     delete[] events_;
 }
 
-void Epoll::add_fd(int fd, uint32_t op, Channel *channel)
-{
-    struct kevent ev;
-    bzero(&ev, sizeof(ev));
-    EV_SET(&ev, fd, EVFILT_READ, op, 0, 0, (void *)channel);
-    int r = kevent(epfd_, &ev, 1, NULL, 0, NULL);
-    errif(r, "kevent failed.");
-}
+// void Epoll::add_fd(int fd, uint32_t op, Channel *channel)
+// {
+//     struct kevent ev;
+//     bzero(&ev, sizeof(ev));
+//     EV_SET(&ev, fd, EVFILT_READ, op, 0, 0, (void *)channel);
+//     int r = kevent(epfd_, &ev, 1, NULL, 0, NULL);
+//     errif(r, "kevent failed.");
+// }
 
 void Epoll::update_channel(Channel *channel)
 {
@@ -48,17 +48,17 @@ void Epoll::update_channel(Channel *channel)
     int fd = channel->get_fd();
     struct kevent ev;
     bzero(&ev, sizeof(ev));
-    if (channel->in_epoll())
+    if (!channel->in_epoll())
     {
-        EV_SET(&ev, fd, EVFILT_READ, channel->get_events(), 0, 0, (void *)channel);
-        int r = kevent(epfd_, &ev, 1, NULL, 0, NULL);
+        EV_SET(&ev, fd, EVFILT_READ, EV_ADD, 0, 0, (void *)channel);
+        int r = kevent(epfd_, &ev, 1, nullptr, 0, nullptr);
         errif(r, "kevent failed.");
         channel->set_in_epoll(true);
     }
     else
     {
-        EV_SET(&ev, fd, EVFILT_READ, channel->get_events(), 0, 0, (void *)channel);
-        int r = kevent(epfd_, &ev, 1, NULL, 0, NULL);
+        EV_SET(&ev, fd, EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, (void *)channel);
+        int r = kevent(epfd_, &ev, 1, nullptr, 0, nullptr);
         errif(r, "kevent failed.");
     }
 }

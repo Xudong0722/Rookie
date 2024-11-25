@@ -27,6 +27,7 @@ ThreadPool::ThreadPool(int size)
                     task = std::move(tasks_.front());
                     tasks_.pop();
                 }
+                std::cout<< __PRETTY_FUNCTION__ << std::endl;
                 task();
             } }));
     }
@@ -50,7 +51,7 @@ ThreadPool::~ThreadPool()
 
 void ThreadPool::add(std::function<void()> task)
 {
-    std::cout << __FUNCTION__ << std::endl;
+    std::cout << __PRETTY_FUNCTION__ << std::endl;
     {
         std::unique_lock<std::mutex> lock(tasks_mutex_);
         if (stop_)

@@ -10,6 +10,7 @@
 #include "Epoll.h"
 #include "ThreadPool.h"
 #include <vector>
+#include <iostream>
 
 EventLoop::EventLoop()
     : ep_(nullptr), thread_pool_(nullptr), quit_(false)
@@ -29,6 +30,7 @@ void EventLoop::loop()
     while (!quit_)
     {
         auto active_channels = ep_->wait(30);
+        std::cout << "DEBUG " << active_channels.size() << std::endl;
         for (const auto cit : active_channels)
         {
             cit->handle_event();

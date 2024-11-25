@@ -2,7 +2,7 @@
  * @Author: Xudong0722
  * @Date: 2024-09-09 15:25:45
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-11-12 00:35:26
+ * @Last Modified time: 2024-11-12 21:09:24
  */
 #include "Channel.h"
 #include "Epoll.h"
@@ -19,14 +19,15 @@ Channel::~Channel()
 
 void Channel::enable_reading()
 {
-    events_ = EV_ADD | EV_ENABLE;
+    events_ = EV_ADD | EV_CLEAR;
     event_loop_->update_channel(this);
 }
 
 void Channel::handle_event()
 {
-    cb_();
-    // event_loop_->add_task(cb_);
+    printf("Debug, Channel::handle_event()\n");
+    // cb_();
+    event_loop_->add_task(cb_); // we can't set non_blocking mode for socket
 }
 
 int Channel::get_fd()

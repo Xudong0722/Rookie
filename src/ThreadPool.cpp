@@ -49,16 +49,16 @@ ThreadPool::~ThreadPool()
     }
 }
 
-void ThreadPool::add(std::function<void()> task)
-{
-    // std::cout << __PRETTY_FUNCTION__ << std::endl;
-    {
-        std::unique_lock<std::mutex> lock(tasks_mutex_);
-        if (stop_)
-        {
-            throw std::runtime_error("Thread pool is already stop, can't add task anymore.");
-        }
-        tasks_.emplace(task);
-    }
-    cv_.notify_one();
-}
+// void ThreadPool::add(std::function<void()> task)
+// {
+//     // std::cout << __PRETTY_FUNCTION__ << std::endl;
+//     {
+//         std::unique_lock<std::mutex> lock(tasks_mutex_);
+//         if (stop_)
+//         {
+//             throw std::runtime_error("Thread pool is already stop, can't add task anymore.");
+//         }
+//         tasks_.emplace(task);
+//     }
+//     cv_.notify_one();
+// }

@@ -15,4 +15,4 @@ clean:
 	rm server && rm client
 
 threadTest:
-	g++ src/ThreadPool.cpp  ThreadPoolTest.cpp -o ThreadPoolTest -std=c++17
+	g++ -pthread src/ThreadPool.cpp  ThreadPoolTest.cpp -o ThreadPoolTest -std=c++17

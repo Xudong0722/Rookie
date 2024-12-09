@@ -11,6 +11,7 @@
 #include <vector>
 #include <queue>
 #include <condition_variable>
+#include <future>
 
 #define DEFAULT_THREAD_POOL_SIZE 10
 class ThreadPool
@@ -19,7 +20,9 @@ public:
     ThreadPool(int size = DEFAULT_THREAD_POOL_SIZE);
     ~ThreadPool();
 
-    void add(std::function<void()>);
+    template <class F, class... Args>
+    auto add(F &&f, Args &&...args)
+        -> std::future<typename std::result_of<F(Args...)>::type>;
 
 private:
     std::vector<std::thread> threads_;
@@ -28,3 +31,23 @@ private:
     std::condition_variable cv_;
     bool stop_;
 };
+
+template <class F, class... Args>
+auto ThreadPool::add(F &&f, Args &&...args) -> std::future<typename std::result_of<F(Args...)>::type>
+{
+    using return_type = typename std::result_of<F(Args...)>::type;
+
+    auto task = std::make_shared<std::packaged_task<return_type()>>(
+        std::bind(std::forward<F>(f), std::forward<Args>(args)...));
+
+    std::future<return_type> res = task->get_future();
+    {
+        std::unique_lock<std::mutex> lock(tasks_mutex_);
+        if (stop_)
+            throw std::runtime_error("enqueue on stopped ThreadPool!");
+        tasks_.emplace([task]
+                       { (*task)(); });
+    }
+    cv_.notify_one();
+    return res;
+}

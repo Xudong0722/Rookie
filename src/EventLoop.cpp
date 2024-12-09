@@ -30,7 +30,6 @@ void EventLoop::loop()
     while (!quit_)
     {
         auto active_channels = ep_->wait(30);
-        std::cout << "DEBUG " << active_channels.size() << std::endl;
         for (const auto cit : active_channels)
         {
             cit->handle_event();

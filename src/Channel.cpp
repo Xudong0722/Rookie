@@ -5,29 +5,57 @@
  * @Last Modified time: 2024-11-12 21:09:24
  */
 #include "Channel.h"
-#include "Epoll.h"
 #include "EventLoop.h"
+#include "Socket.h"
+#include <unistd.h>
+#include <sys/epoll.h>
 
 Channel::Channel(EventLoop *event_loop, int fd)
-    : event_loop_(event_loop), fd_(fd)
+    : event_loop_(event_loop), fd_(fd), is_use_threadpool_(true)
 {
 }
 
 Channel::~Channel()
 {
+    if (fd_ != -1)
+    {
+        close(fd_);
+        fd_ = -1;
+    }
 }
 
 void Channel::enable_reading()
 {
-    events_ = EV_ADD | EV_CLEAR;
+    events_ |= EPOLLIN | EPOLLPRI;
+    event_loop_->update_channel(this);
+}
+
+void Channel::use_ET()
+{
+    events_ |= EPOLLET;
     event_loop_->update_channel(this);
 }
 
 void Channel::handle_event()
 {
-    printf("Debug, Channel::handle_event()\n");
-    // cb_();
-    event_loop_->add_task(cb_); // we can't set non_blocking mode for socket
+    // printf("Debug, Channel::handle_event()\n");
+    // // cb_();
+    // event_loop_->add_task(cb_); // we can't set non_blocking mode for socket
+
+    if (ready_ & (EPOLLIN | EPOLLPRI))
+    {
+        if (is_use_threadpool_)
+            event_loop_->add_task(read_cb_);
+        else
+            read_cb_();
+    }
+    else if (ready_ & EPOLLOUT)
+    {
+        if (is_use_threadpool_)
+            event_loop_->add_task(write_cb_);
+        else
+            write_cb_();
+    }
 }
 
 int Channel::get_fd()
@@ -40,17 +68,22 @@ uint32_t Channel::get_events() const
     return events_;
 }
 
-void Channel::set_revents(uint32_t revents)
+void Channel::set_events(uint32_t events)
 {
-    revents_ = revents;
+    events_ = events;
 }
 
-uint32_t Channel::get_revents() const
+uint32_t Channel::get_ready() const
 {
-    return revents_;
+    return ready_;
 }
 
-bool Channel::in_epoll() const
+void Channel::set_ready(uint32_t ready)
+{
+    ready_ = ready;
+}
+
+bool Channel::get_in_epoll() const
 {
     return is_in_epoll_;
 }
@@ -60,9 +93,14 @@ void Channel::set_in_epoll(bool is_in_epoll)
     is_in_epoll_ = is_in_epoll;
 }
 
-void Channel::set_callback(std::function<void()> cb)
+void Channel::set_read_callback(std::function<void()> cb)
 {
     if (nullptr == cb)
         return;
-    cb_ = cb;
+    read_cb_ = cb;
+}
+
+void Channel::set_use_threadpool(bool use)
+{
+    is_use_threadpool_ = use;
 }

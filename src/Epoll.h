@@ -6,7 +6,7 @@
  */
 #pragma once
 #include <vector>
-#include <sys/event.h>
+#include <sys/epoll.h>
 
 class Channel;
 
@@ -14,7 +14,7 @@ class Epoll
 {
 private:
     int epfd_;
-    struct kevent *events_;
+    struct epoll_event *events_;
 
 public:
     Epoll();
@@ -22,5 +22,6 @@ public:
 
     // void add_fd(int fd, uint32_t op, Channel *channel);
     void update_channel(Channel *channel);
+    void delete_channel(Channel *channel);
     std::vector<Channel *> wait(int timeout = -1);
 };

@@ -1,4 +1,3 @@
-#include "Acceptor.h"
 /*
  * @Author: Xudong0722
  * @Date: 2024-09-18 17:25:28
@@ -11,9 +10,10 @@
 #include "EventLoop.h"
 #include "Socket.h"
 #include "InetAddr.h"
+#include <cstdio>
 
 Acceptor::Acceptor(EventLoop *loop)
-    : loop_(loop)
+    : loop_(loop), sock_(nullptr), accept_channel_(nullptr)
 {
     addr_ = new InetAddr("127.0.0.1", 8888);
     sock_ = new Socket();
@@ -24,13 +24,14 @@ Acceptor::Acceptor(EventLoop *loop)
     accept_channel_ = new Channel(loop_, sock_->get_fd());
 
     std::function<void()> cb = std::bind(&Acceptor::accept_connection, this);
-    accept_channel_->set_callback(cb);
+    accept_channel_->set_read_callback(cb);
     accept_channel_->enable_reading();
+    accept_channel_->set_use_threadpool(false);
+    delete addr_;
 }
 
 Acceptor::~Acceptor()
 {
-    delete addr_;
     delete sock_;
     delete accept_channel_;
 }

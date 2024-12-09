@@ -9,7 +9,7 @@ server:
 	src/Buffer.cpp \
 	src/Connection.cpp \
 	src/ThreadPool.cpp \
-	server.cpp -o server -std=c++17
+	server.cpp -o server -std=c++17 -pthread
 
 clean:
 	rm server && rm client

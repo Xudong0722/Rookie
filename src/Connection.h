@@ -7,6 +7,7 @@
 
 #pragma once
 #include <functional>
+#include <string>
 
 class EventLoop;
 class Channel;
@@ -21,11 +22,13 @@ public:
 
     void echo(int sockfd);
     void set_delete_connection_callback(std::function<void(Socket *)>);
+    void send(int sockfd);
 
 private:
     EventLoop *event_loop_;
     Socket *sock_;
     Channel *channel_;
     Buffer *read_buffer_;
+    std::string *in_buffer_;
     std::function<void(Socket *)> delete_connection_callback_;
 };

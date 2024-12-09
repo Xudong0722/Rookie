@@ -6,8 +6,8 @@
  */
 
 #pragma once
-#include <sys/event.h>
 #include <functional>
+#include <stdint.h>
 
 class Epoll;
 class EventLoop;
@@ -23,20 +23,25 @@ public:
 
     int get_fd();
     uint32_t get_events() const;
-    void set_revents(uint32_t revents);
-    uint32_t get_revents() const;
+    void set_events(uint32_t events);
+    uint32_t get_ready() const;
+    void set_ready(uint32_t ready);
 
-    bool in_epoll() const;
+    bool get_in_epoll() const;
     void set_in_epoll(bool is_in_epoll);
 
-    void set_callback(std::function<void()> cb);
+    void use_ET();
+    void set_use_threadpool(bool use = true);
+    void set_read_callback(std::function<void()> cb);
 
 private:
     EventLoop *event_loop_;
     int fd_{-1};
 
     uint32_t events_{0};
-    uint32_t revents_{0};
+    uint32_t ready_{0};
     bool is_in_epoll_{false};
-    std::function<void()> cb_;
+    bool is_use_threadpool_{false};
+    std::function<void()> read_cb_;
+    std::function<void()> write_cb_;
 };

@@ -10,16 +10,15 @@
 #include "Channel.h"
 #include <unistd.h>
 #include <string.h>
-#include <iostream>
 
 #define MAX_EVENTS 1000
 
 Epoll::Epoll() : epfd_(-1), events_(nullptr)
 {
-    epfd_ = kqueue();
+    epfd_ = epoll_create1(0);
     errif(epfd_ == -1, "epoll create failed.");
-    events_ = new struct kevent[MAX_EVENTS];
-    bzero(events_, sizeof(struct kevent) * MAX_EVENTS);
+    events_ = new epoll_event[MAX_EVENTS];
+    bzero(events_, sizeof(*events_) * MAX_EVENTS);
 }
 
 Epoll::~Epoll()
@@ -46,38 +45,31 @@ void Epoll::update_channel(Channel *channel)
     if (nullptr == channel)
         return;
     int fd = channel->get_fd();
-    struct kevent ev;
+    struct epoll_event ev;
     bzero(&ev, sizeof(ev));
-    if (!channel->in_epoll())
+    ev.data.ptr = channel;
+    ev.events = channel->get_events();
+    if (!channel->get_in_epoll())
     {
-        EV_SET(&ev, fd, EVFILT_READ, EV_ADD, 0, 0, (void *)channel);
-        int r = kevent(epfd_, &ev, 1, nullptr, 0, nullptr);
-        errif(r, "kevent failed.");
+        errif(epoll_ctl(epfd_, EPOLL_CTL_ADD, fd, &ev) == -1, "epoll add error");
         channel->set_in_epoll(true);
     }
     else
     {
-        EV_SET(&ev, fd, EVFILT_READ, EV_ADD | EV_CLEAR, 0, 0, (void *)channel);
-        int r = kevent(epfd_, &ev, 1, nullptr, 0, nullptr);
-        errif(r, "kevent failed.");
+        errif(epoll_ctl(epfd_, EPOLL_CTL_MOD, fd, &ev) == -1, "epoll modify error");
     }
 }
 
 std::vector<Channel *> Epoll::wait(int timeout)
 {
     std::vector<Channel *> active_channels;
-    struct timespec time_out
-    {
-        timeout, 0
-    };
-    int n = kevent(epfd_, NULL, 0, events_, MAX_EVENTS, &time_out);
+
+    int n = epoll_wait(epfd_, events_, MAX_EVENTS, timeout);
     errif(n == -1, "epoll wait error.");
     for (int i = 0; i < n; ++i)
     {
-        Channel *ch = (Channel *)events_[i].udata;
-        std::cout << ch << std::endl;
-        ch->set_revents(events_[i].filter);
-        std::cout << ch << " " << events_[i].filter << std::endl;
+        Channel *ch = (Channel *)events_[i].data.ptr;
+        ch->set_ready(events_[i].events);
         active_channels.emplace_back(ch);
     }
     return active_channels;

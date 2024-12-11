@@ -7,6 +7,7 @@
 #pragma once
 
 #include <map>
+#include <vector>
 
 #define READ_BUFFER 1024
 
@@ -14,6 +15,7 @@ class EventLoop;
 class Socket;
 class Acceptor;
 class Connection;
+class ThreadPool;
 
 class Server
 {
@@ -25,7 +27,9 @@ public:
     void delete_connection(Socket *sock);
 
 private:
-    EventLoop *event_loop_{nullptr};
+    EventLoop *main_reactor_{nullptr};
     Acceptor *acceptor_{nullptr};
     std::map<int, Connection *> connections_;
+    std::vector<EventLoop *> sub_reactors_;
+    ThreadPool *thread_pool_{nullptr};
 };

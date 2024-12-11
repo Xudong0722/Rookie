@@ -15,7 +15,7 @@
 Acceptor::Acceptor(EventLoop *loop)
     : loop_(loop), sock_(nullptr), accept_channel_(nullptr)
 {
-    addr_ = new InetAddr("127.0.0.1", 8888);
+    InetAddr *addr_ = new InetAddr("127.0.0.1", 8888);
     sock_ = new Socket();
 
     sock_->bind(addr_);

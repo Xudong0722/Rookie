@@ -20,10 +20,8 @@ public:
 
     void loop();
     void update_channel(Channel *channel);
-    void add_task(std::function<void()> task);
 
 private:
     Epoll *ep_;
-    ThreadPool *thread_pool_;
     bool quit_{false};
 };

@@ -29,6 +29,5 @@ private:
     Socket *sock_;
     Channel *channel_;
     Buffer *read_buffer_;
-    std::string *in_buffer_;
     std::function<void(Socket *)> delete_connection_callback_;
 };

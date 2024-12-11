@@ -13,16 +13,14 @@
 #include <iostream>
 
 EventLoop::EventLoop()
-    : ep_(nullptr), thread_pool_(nullptr), quit_(false)
+    : ep_(nullptr), quit_(false)
 {
     ep_ = new Epoll();
-    thread_pool_ = new ThreadPool();
 }
 
 EventLoop::~EventLoop()
 {
     delete ep_;
-    delete thread_pool_;
 }
 
 void EventLoop::loop()
@@ -42,12 +40,4 @@ void EventLoop::update_channel(Channel *channel)
     if (nullptr == channel)
         return;
     ep_->update_channel(channel);
-}
-
-void EventLoop::add_task(std::function<void()> task)
-{
-    if (nullptr == thread_pool_)
-        return;
-
-    thread_pool_->add(task);
 }

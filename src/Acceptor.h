@@ -21,12 +21,11 @@ public:
 
     void accept_connection();
 
-    std::function<void(Socket *)> new_connection_callback_;
     void set_new_connection_callback(std::function<void(Socket *)>);
 
 private:
     EventLoop *loop_{nullptr};
     Socket *sock_{nullptr};
-    InetAddr *addr_{nullptr};
     Channel *accept_channel_{nullptr};
+    std::function<void(Socket *)> new_connection_callback_;
 };

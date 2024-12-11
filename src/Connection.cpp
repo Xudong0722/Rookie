@@ -17,7 +17,7 @@
 #define READ_BUFFER 1024
 
 Connection::Connection(EventLoop *loop, Socket *sock)
-    : event_loop_(loop), sock_(sock), channel_(nullptr), in_buffer_(new std::string{}), read_buffer_(nullptr)
+    : event_loop_(loop), sock_(sock), channel_(nullptr), read_buffer_(nullptr)
 {
     channel_ = new Channel(loop, sock_->get_fd());
     channel_->enable_reading();

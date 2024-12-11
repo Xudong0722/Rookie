@@ -44,17 +44,11 @@ void Channel::handle_event()
 
     if (ready_ & (EPOLLIN | EPOLLPRI))
     {
-        if (is_use_threadpool_)
-            event_loop_->add_task(read_cb_);
-        else
-            read_cb_();
+        read_cb_();
     }
     else if (ready_ & EPOLLOUT)
     {
-        if (is_use_threadpool_)
-            event_loop_->add_task(write_cb_);
-        else
-            write_cb_();
+        write_cb_();
     }
 }
 

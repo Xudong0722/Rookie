@@ -12,16 +12,15 @@ class Epoll;
 class Channel;
 class ThreadPool;
 
-class EventLoop
-{
-public:
-    EventLoop();
-    ~EventLoop();
+class EventLoop {
+ public:
+  EventLoop();
+  ~EventLoop();
 
-    void loop();
-    void update_channel(Channel *channel);
+  void loop();
+  void update_channel(Channel *channel);
 
-private:
-    Epoll *ep_;
-    bool quit_{false};
+ private:
+  Epoll *ep_;
+  bool quit_{false};
 };

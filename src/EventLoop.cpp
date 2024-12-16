@@ -6,38 +6,26 @@
  */
 
 #include "EventLoop.h"
+#include <iostream>
+#include <vector>
 #include "Channel.h"
 #include "Epoll.h"
 #include "ThreadPool.h"
-#include <vector>
-#include <iostream>
 
-EventLoop::EventLoop()
-    : ep_(nullptr), quit_(false)
-{
-    ep_ = new Epoll();
-}
+EventLoop::EventLoop() : ep_(nullptr), quit_(false) { ep_ = new Epoll(); }
 
-EventLoop::~EventLoop()
-{
-    delete ep_;
-}
+EventLoop::~EventLoop() { delete ep_; }
 
-void EventLoop::loop()
-{
-    while (!quit_)
-    {
-        auto active_channels = ep_->wait(30);
-        for (const auto cit : active_channels)
-        {
-            cit->handle_event();
-        }
+void EventLoop::loop() {
+  while (!quit_) {
+    auto active_channels = ep_->wait(30);
+    for (const auto cit : active_channels) {
+      cit->handle_event();
     }
+  }
 }
 
-void EventLoop::update_channel(Channel *channel)
-{
-    if (nullptr == channel)
-        return;
-    ep_->update_channel(channel);
+void EventLoop::update_channel(Channel *channel) {
+  if (nullptr == channel) return;
+  ep_->update_channel(channel);
 }

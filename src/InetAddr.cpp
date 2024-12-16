@@ -8,34 +8,23 @@
 #include "InetAddr.h"
 #include <string.h>
 
-InetAddr::InetAddr() : addr_len_(sizeof(addr_info_))
-{
-    bzero(&addr_info_, sizeof(addr_info_));
-}
+InetAddr::InetAddr() : addr_len_(sizeof(addr_info_)) { bzero(&addr_info_, sizeof(addr_info_)); }
 
-InetAddr::InetAddr(const char *ip, uint16_t port) : addr_len_(sizeof(addr_info_))
-{
-    bzero(&addr_info_, sizeof(addr_info_));
-    addr_info_.sin_family = AF_INET;
-    addr_info_.sin_addr.s_addr = inet_addr(ip);
-    addr_info_.sin_port = htons(port);
-    addr_len_ = sizeof(addr_info_);
+InetAddr::InetAddr(const char *ip, uint16_t port) : addr_len_(sizeof(addr_info_)) {
+  bzero(&addr_info_, sizeof(addr_info_));
+  addr_info_.sin_family = AF_INET;
+  addr_info_.sin_addr.s_addr = inet_addr(ip);
+  addr_info_.sin_port = htons(port);
+  addr_len_ = sizeof(addr_info_);
 }
 
 InetAddr::~InetAddr() = default;
 
-void InetAddr::set_inet_addr(sockaddr_in addr, socklen_t addr_len)
-{
-    addr_info_ = addr;
-    addr_len_ = addr_len;
+void InetAddr::set_inet_addr(sockaddr_in addr, socklen_t addr_len) {
+  addr_info_ = addr;
+  addr_len_ = addr_len;
 }
 
-sockaddr_in InetAddr::get_addr()
-{
-    return addr_info_;
-}
+sockaddr_in InetAddr::get_addr() { return addr_info_; }
 
-socklen_t InetAddr::get_addr_len()
-{
-    return addr_len_;
-}
+socklen_t InetAddr::get_addr_len() { return addr_len_; }

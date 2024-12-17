@@ -4,8 +4,8 @@
  * @Last Modified by: Xudong0722
  * @Last Modified time: 2024-09-09 23:19:00
  */
-#include "src/Server.h"
-#include "src/EventLoop.h"
+#include "Server.h"
+#include "EventLoop.h"
 
 int main() {
   EventLoop *loop = new EventLoop();

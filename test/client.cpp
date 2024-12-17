@@ -7,10 +7,10 @@
 #include <string.h>
 #include <unistd.h>
 #include <iostream>
-#include "src/Buffer.h"
-#include "src/InetAddr.h"
-#include "src/Socket.h"
-#include "src/util.h"
+#include "Buffer.h"
+#include "InetAddr.h"
+#include "Socket.h"
+#include "util.h"
 
 #define BUFFER_SIZE 1024
 int main() {

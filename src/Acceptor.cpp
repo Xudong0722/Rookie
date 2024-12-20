@@ -11,6 +11,7 @@
 #include "EventLoop.h"
 #include "InetAddr.h"
 #include "Socket.h"
+#include "Elog.h"
 
 Acceptor::Acceptor(EventLoop *loop) : loop_(loop), sock_(nullptr), accept_channel_(nullptr) {
   InetAddr *addr_ = new InetAddr("127.0.0.1", 8888);
@@ -37,6 +38,7 @@ void Acceptor::accept_connection() {
   InetAddr *new_client_addr = new InetAddr;
   Socket *new_client_sock = new Socket(sock_->accept(new_client_addr));
 
+  Elog::GetInst().log(LogLevel::INFO, "new client accept");
   printf("new client fd %d! IP: %s Port: %d\n", new_client_sock->get_fd(),
          inet_ntoa(new_client_addr->addr_info_.sin_addr), ntohs(new_client_addr->addr_info_.sin_port));
   new_client_sock->set_non_blocking();

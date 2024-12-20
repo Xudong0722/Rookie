@@ -16,17 +16,44 @@ class Buffer;
 
 class Connection {
  public:
+  enum class STATE { INVALID = 0, HANDSHAKING = 1, CONNECTED = 2, CLOSED = 3, FAILED = 4 };
+
+ public:
   Connection(EventLoop *loop, Socket *sock);
   ~Connection();
 
-  void echo(int sockfd);
-  void set_delete_connection_callback(std::function<void(Socket *)>);
-  void send(int sockfd);
+  void read();
+  void write();
+
+  void set_on_connect_callback(const std::function<void(Connection *)> &cb);
+  void set_delete_connection_callback(const std::function<void(Socket *)> &cb);
+
+  STATE get_state();
+  void close();
+
+  void set_send_buf(const char *str);
+  Buffer *get_read_buf();
+  const char *read_buf();
+  Buffer *get_send_buf();
+  const char *send_buf();
+  void get_line_send_buf();
+  Socket *get_socket();
+
+  void on_connect(std::function<void()> fn);
+
+ private:
+  void read_non_blocking();
+  void write_non_blocking();
+  void read_blocking();
+  void write_blocking();
 
  private:
   EventLoop *event_loop_;
   Socket *sock_;
   Channel *channel_;
   Buffer *read_buffer_;
+  Buffer *send_buffer_;
+  STATE state_;
   std::function<void(Socket *)> delete_connection_callback_;
+  std::function<void(Connection *)> on_connect_callback_;
 };

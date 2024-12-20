@@ -6,22 +6,24 @@
  */
 
 #pragma once
+#include <stdint.h>
 
 class InetAddr;
 
 class Socket {
  public:
   Socket();
-  Socket(int _fd);
+  explicit Socket(int _fd);
   ~Socket();
 
  public:
   void bind(InetAddr *);
   void listen();
   void set_non_blocking();
+  bool is_non_blocking();
   int accept(InetAddr *);
   void connect(InetAddr *);
-
+  void connect(const char *ip, uint16_t port);
   int get_fd();
 
  private:

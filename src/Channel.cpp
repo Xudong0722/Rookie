@@ -20,12 +20,12 @@ Channel::~Channel() {
 }
 
 void Channel::enable_reading() {
-  events_ |= EPOLLIN | EPOLLPRI;
+  listen_events_ |= EPOLLIN | EPOLLPRI;
   event_loop_->update_channel(this);
 }
 
 void Channel::use_ET() {
-  events_ |= EPOLLET;
+  listen_events_ |= EPOLLET;
   event_loop_->update_channel(this);
 }
 
@@ -34,28 +34,26 @@ void Channel::handle_event() {
   // // cb_();
   // event_loop_->add_task(cb_); // we can't set non_blocking mode for socket
 
-  if (ready_ & (EPOLLIN | EPOLLPRI)) {
+  if (ready_events_ & (EPOLLIN | EPOLLPRI)) {
     read_cb_();
-  } else if (ready_ & EPOLLOUT) {
+  } else if (ready_events_ & EPOLLOUT) {
     write_cb_();
   }
 }
 
 int Channel::get_fd() { return fd_; }
 
-uint32_t Channel::get_events() const { return events_; }
+uint32_t Channel::get_listen_events() const { return listen_events_; }
 
-void Channel::set_events(uint32_t events) { events_ = events; }
+uint32_t Channel::get_ready_events() const { return ready_events_; }
 
-uint32_t Channel::get_ready() const { return ready_; }
-
-void Channel::set_ready(uint32_t ready) { ready_ = ready; }
+void Channel::set_ready_events(uint32_t ready) { ready_events_ = ready; }
 
 bool Channel::get_in_epoll() const { return is_in_epoll_; }
 
 void Channel::set_in_epoll(bool is_in_epoll) { is_in_epoll_ = is_in_epoll; }
 
-void Channel::set_read_callback(std::function<void()> cb) {
+void Channel::set_read_callback(const std::function<void()> &cb) {
   if (nullptr == cb) return;
   read_cb_ = cb;
 }

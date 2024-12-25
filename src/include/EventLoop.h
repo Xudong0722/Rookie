@@ -7,12 +7,14 @@
 
 #pragma once
 #include <functional>
+#include "util.h"
 
 class Epoll;
 class Channel;
 class ThreadPool;
 
-class EventLoop {
+class EventLoop
+  : protected noncopymoveable {
  public:
   EventLoop();
   ~EventLoop();

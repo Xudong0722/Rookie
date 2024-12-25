@@ -170,7 +170,7 @@ void Connection::set_delete_connection_callback(const std::function<void(Socket 
 
 void Connection::set_on_connect_callback(const std::function<void(Connection *)> &cb) {
   on_connect_callback_ = cb;
-  channel_->set_read_callback([this]() { send_buffer_->getline(); });
+  channel_->set_read_callback([this]() { on_connect_callback_(this); });
 }
 
 void Connection::get_line_send_buf() { send_buffer_->getline(); }

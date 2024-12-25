@@ -7,6 +7,7 @@
 
 #include "Acceptor.h"
 #include <cstdio>
+#include <sstream>
 #include "Channel.h"
 #include "EventLoop.h"
 #include "InetAddr.h"
@@ -25,7 +26,6 @@ Acceptor::Acceptor(EventLoop *loop) : loop_(loop), sock_(nullptr), accept_channe
   std::function<void()> cb = std::bind(&Acceptor::accept_connection, this);
   accept_channel_->set_read_callback(cb);
   accept_channel_->enable_reading();
-  accept_channel_->set_use_threadpool(false);
   delete addr_;
 }
 
@@ -37,10 +37,15 @@ Acceptor::~Acceptor() {
 void Acceptor::accept_connection() {
   InetAddr *new_client_addr = new InetAddr;
   Socket *new_client_sock = new Socket(sock_->accept(new_client_addr));
-
-  Elog::GetInst().log(LogLevel::INFO, "new client accept");
-  printf("new client fd %d! IP: %s Port: %d\n", new_client_sock->get_fd(),
-         inet_ntoa(new_client_addr->addr_info_.sin_addr), ntohs(new_client_addr->addr_info_.sin_port));
+	
+  std::ostringstream oss;
+  oss << "new client fd: " << new_client_sock->get_fd()
+	 << "ip address: " << inet_ntoa(new_client_addr->addr_info_.sin_addr)
+       	 << "port: " << ntohs(new_client_addr->addr_info_.sin_port);
+  Elog::GetInst().log(LogLevel::INFO, oss.str());
+  // printf("new client fd %d! IP: %s Port: %d\n", new_client_sock->get_fd(),
+  //       inet_ntoa(new_client_addr->addr_info_.sin_addr), ntohs(new_client_addr->addr_info_.sin_port));
+  
   new_client_sock->set_non_blocking();
   new_connection_callback_(new_client_sock);
   delete new_client_addr;

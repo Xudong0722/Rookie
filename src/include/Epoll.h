@@ -7,10 +7,12 @@
 #pragma once
 #include <sys/epoll.h>
 #include <vector>
+#include "util.h"
 
 class Channel;
 
-class Epoll {
+class Epoll
+  : protected noncopymoveable {
  private:
   int epfd_;
   struct epoll_event *events_;

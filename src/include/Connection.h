@@ -8,13 +8,15 @@
 #pragma once
 #include <functional>
 #include <string>
+#include "util.h"
 
 class EventLoop;
 class Channel;
 class Socket;
 class Buffer;
 
-class Connection {
+class Connection
+  : protected noncopymoveable {
  public:
   enum class STATE { INVALID = 0, HANDSHAKING = 1, CONNECTED = 2, CLOSED = 3, FAILED = 4 };
 

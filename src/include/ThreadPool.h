@@ -12,9 +12,11 @@
 #include <queue>
 #include <thread>
 #include <vector>
+#include "util.h"
 
 #define DEFAULT_THREAD_POOL_SIZE 10
-class ThreadPool {
+class ThreadPool
+ : protected noncopymoveable {
  public:
   ThreadPool(int size = DEFAULT_THREAD_POOL_SIZE);
   ~ThreadPool();

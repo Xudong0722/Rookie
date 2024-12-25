@@ -2,9 +2,9 @@
  * @Author: Xudong0722
  * @Date: 2024-09-01 12:57:41
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-09-09 23:19:00
+ * @Last Modified time: 2024-12-25 23:00:44
  */
-#include "Server.h"
+#include "TcpServer.h"
 #include <iostream>
 #include "Buffer.h"
 #include "Connection.h"
@@ -13,7 +13,7 @@
 
 int main() {
   EventLoop *loop = new EventLoop();
-  Server *server = new Server(loop);
+  TcpServer *server = new TcpServer(loop);
 
   server->on_connect([](Connection *conn) {
     conn->read();

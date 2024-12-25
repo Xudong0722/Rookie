@@ -7,13 +7,15 @@
 
 #pragma once
 #include <functional>
+#include "util.h"
 
 class EventLoop;
 class Socket;
 class InetAddr;
 class Channel;
 
-class Acceptor {
+class Acceptor 
+  : protected noncopymoveable {
  public:
   Acceptor(EventLoop *loop);
   ~Acceptor();

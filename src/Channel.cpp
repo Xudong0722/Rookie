@@ -10,7 +10,7 @@
 #include "EventLoop.h"
 #include "Socket.h"
 
-Channel::Channel(EventLoop *event_loop, int fd) : event_loop_(event_loop), fd_(fd), is_use_threadpool_(true) {}
+Channel::Channel(EventLoop *event_loop, int fd) : event_loop_(event_loop), fd_(fd) {}
 
 Channel::~Channel() {
   if (fd_ != -1) {
@@ -57,5 +57,3 @@ void Channel::set_read_callback(const std::function<void()> &cb) {
   if (nullptr == cb) return;
   read_cb_ = cb;
 }
-
-void Channel::set_use_threadpool(bool use) { is_use_threadpool_ = use; }

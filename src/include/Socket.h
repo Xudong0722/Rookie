@@ -7,10 +7,12 @@
 
 #pragma once
 #include <stdint.h>
+#include "util.h"
 
 class InetAddr;
 
-class Socket {
+class Socket
+  : protected noncopymoveable {
  public:
   Socket();
   explicit Socket(int _fd);

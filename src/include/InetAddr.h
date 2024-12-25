@@ -6,8 +6,10 @@
  */
 #pragma once
 #include <arpa/inet.h>
+#include "util.h"
 
-class InetAddr {
+class InetAddr
+  : protected noncopymoveable {
  public:
   InetAddr();
   InetAddr(const char *ip, uint16_t port);

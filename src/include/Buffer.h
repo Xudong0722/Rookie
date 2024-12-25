@@ -6,8 +6,10 @@
  */
 #pragma once
 #include <string>
+#include "util.h"
 
-class Buffer {
+class Buffer
+  : protected noncopymoveable {
  public:
   Buffer();
   ~Buffer();

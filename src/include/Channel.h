@@ -8,11 +8,13 @@
 #pragma once
 #include <stdint.h>
 #include <functional>
+#include "util.h"
 
 class Epoll;
 class EventLoop;
 
-class Channel {
+class Channel
+  : protected noncopymoveable {
  public:
   Channel(EventLoop *event_loop, int fd);
   ~Channel();
@@ -30,7 +32,6 @@ class Channel {
   void set_in_epoll(bool is_in_epoll);
 
   void use_ET();
-  void set_use_threadpool(bool use = true);
   void set_read_callback(const std::function<void()>& cb);
 
  private:
@@ -40,7 +41,6 @@ class Channel {
   uint32_t listen_events_{0};
   uint32_t ready_events_{0};
   bool is_in_epoll_{false};
-  bool is_use_threadpool_{false};
   std::function<void()> read_cb_;
   std::function<void()> write_cb_;
 };

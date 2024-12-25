@@ -9,6 +9,7 @@
 #include <functional>
 #include <map>
 #include <vector>
+#include "util.h"
 
 #define READ_BUFFER 1024
 
@@ -18,10 +19,11 @@ class Acceptor;
 class Connection;
 class ThreadPool;
 
-class Server {
+class TcpServer
+  : protected noncopymoveable{
  public:
-  explicit Server(EventLoop *event_loop);
-  ~Server();
+  explicit TcpServer(EventLoop *event_loop);
+  ~TcpServer();
 
   void handle_new_connect_event(Socket *sock);
   void delete_connection(Socket *sock);

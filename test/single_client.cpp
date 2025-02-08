@@ -17,13 +17,16 @@ int main() {
   Connection *conn = new Connection(nullptr, sock);
   while (true) {
     conn->get_line_send_buf();
-    conn->write();
-    if (conn->get_state() == Connection::STATE::CLOSED) {
-      conn->close();
-      break;
+    
+    if(conn->get_send_buf_size() > 0){
+      conn->write();
+      if (conn->get_state() == Connection::STATE::CLOSED) {
+        conn->close();
+        break;
+      }
+      conn->read();
+      std::cout << "Message from server: " << conn->read_buf() << std::endl;
     }
-    conn->read();
-    std::cout << "Message from server: " << conn->read_buf() << std::endl;
   }
 
   delete sock;

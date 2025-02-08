@@ -99,6 +99,7 @@ void Connection::write_non_blocking() {
   memcpy(buf, send_buffer_->c_str(), send_buffer_->size());
   int data_size = send_buffer_->size();
   int data_left = data_size;
+  std::cout << data_size <<" " << data_left << std::endl;
   while (data_left > 0) {
     ssize_t bytes_write = ::write(sockfd, buf + data_size - data_left, data_left);
     if (bytes_write == -1 && errno == EINTR) {
@@ -143,6 +144,7 @@ void Connection::read_blocking() {
  */
 void Connection::write_blocking() {
   int sockfd = sock_->get_fd();
+  std::cout << send_buffer_->c_str() << " " << send_buffer_->size() << std::endl;
   ssize_t bytes_write = ::write(sockfd, send_buffer_->c_str(), send_buffer_->size());
   if (bytes_write == -1) {
     printf("Other error on blocking client fd:%d\n", sockfd);
@@ -163,6 +165,10 @@ const char *Connection::send_buf() { return send_buffer_->c_str(); }
 Buffer *Connection::get_read_buf() { return read_buffer_; }
 
 const char *Connection::read_buf() { return read_buffer_->c_str(); }
+
+ssize_t Connection::get_read_buf_size() { return read_buffer_->size(); }
+
+ssize_t Connection::get_send_buf_size() { return send_buffer_->size(); }
 
 void Connection::set_delete_connection_callback(const std::function<void(Socket *)> &cb) {
   delete_connection_callback_ = cb;

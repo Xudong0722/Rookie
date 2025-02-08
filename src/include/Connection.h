@@ -36,8 +36,10 @@ class Connection
   void set_send_buf(const char *str);
   Buffer *get_read_buf();
   const char *read_buf();
+  ssize_t get_read_buf_size();
   Buffer *get_send_buf();
   const char *send_buf();
+  ssize_t get_send_buf_size();
   void get_line_send_buf();
   Socket *get_socket();
 

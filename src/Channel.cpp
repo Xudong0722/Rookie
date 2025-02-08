@@ -30,10 +30,6 @@ void Channel::use_ET() {
 }
 
 void Channel::handle_event() {
-  // printf("Debug, Channel::handle_event()\n");
-  // // cb_();
-  // event_loop_->add_task(cb_); // we can't set non_blocking mode for socket
-
   if (ready_events_ & (EPOLLIN | EPOLLPRI)) {
     read_cb_();
   } else if (ready_events_ & EPOLLOUT) {

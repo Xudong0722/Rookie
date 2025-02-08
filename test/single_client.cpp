@@ -2,13 +2,15 @@
  * @Author: Xudong0722
  * @Date: 2024-09-01 12:57:55
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-11-12 21:03:54
+ * @Last Modified time: 2024-12-29 13:21:00
  */
 #include <iostream>
 #include "Connection.h"
 #include "Socket.h"
+#include "Elog.h"
 
 int main() {
+  Elog::GetInst().set_log_file("client.txt");
   Socket *sock = new Socket();
   sock->connect("127.0.0.1", 8888);
 

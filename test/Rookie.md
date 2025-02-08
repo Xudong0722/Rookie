@@ -22,3 +22,37 @@
 1. 可以进行IO操作的内核对象
 2. 传输媒介可以是文件，管道，文件描述符
 3. 数据的入口是通过文件描述符（fd）描述
+
+**兼容**
+向前兼容和向上兼容都表示向未来兼容
+向后兼容和向下兼容都表示向之前兼容，即保证老的版本不会出现问题。
+
+**epoll**
+1. int epoll_create(int size); / int epoll_create1(int flags);
+参考 https://man7.org/linux/man-pages/man2/epoll_create.2.html
+在最初的实现中，调用者通过 size 参数告知内核需要监听的文件描述符数量。如果监听的文件描述符数量超过 size, 则内核会自动扩容。
+epoll_create这个方法中的size已经废弃，不再使用，为了向后兼容(保证以前的代码有效)。
+而我们代码中的epoll_create1参数填了0，和最新的epoll_create等价，其他flag可以看上面的link。
+
+2. int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event);
+向 epfd 对应的内核epoll 实例添加、修改或删除对 fd 上事件 event 的监听。op 可以为 EPOLL_CTL_ADD, EPOLL_CTL_MOD, EPOLL_CTL_DEL 分别对应的是添加新的事件，修改文件描述符上监听的事件类型，从实例上删除一个事件。
+
+3. int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout);
+当 timeout 为 0 时，epoll_wait 永远会立即返回。而 timeout 为 -1 时，epoll_wait 会一直阻塞直到任一已注册的事件变为就绪。当 timeout 为一正整数时，epoll 会阻塞直到计时 timeout 毫秒终了或已注册的事件变为就绪。因为内核调度延迟，阻塞的时间可能会略微超过 timeout 毫秒。
+
+**listen**
+int listen(int sockfd, int backlog);
+ref:https://man7.org/linux/man-pages/man2/listen.2.html
+       listen() marks the socket referred to by sockfd as a passive
+       socket, that is, as a socket that will be used to accept incoming
+       connection requests using accept(2).
+
+       The sockfd argument is a file descriptor that refers to a socket
+       of type SOCK_STREAM or SOCK_SEQPACKET.
+
+       The backlog argument defines the maximum length to which the
+       queue of pending connections for sockfd may grow.  If a
+       connection request arrives when the queue is full, the client may
+       receive an error with an indication of ECONNREFUSED or, if the
+       underlying protocol supports retransmission, the request may be
+       ignored so that a later reattempt at connection succeeds.

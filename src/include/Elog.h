@@ -2,7 +2,7 @@
  * @Author: Xudong0722 
  * @Date: 2024-12-26 23:23:25 
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-12-27 00:30:39
+ * @Last Modified time: 2025-02-22 16:51:44
  */
 #pragma once
 #include <string>
@@ -10,7 +10,9 @@
 #include <sstream>
 #include <iostream>
 #include <mutex>
+#include <cstdarg>
 #include "ETime.h"
+#include "util.h"
 
 enum class LogLevel {
   DBG = 0,
@@ -20,49 +22,48 @@ enum class LogLevel {
 };
 
 
-#define LOG(level, ...) Elog::GetInst().log(LogLevel::level, __VA_ARGS__)
+//#define LOG(level, ...) Elog::GetInst().log(LogLevel::level, __VA_ARGS__)
 
-
-class Elog {
- private:
-  Elog();
+class Elog: public noncopymoveable{
+public:
+  Elog(std::FILE* fp);
   ~Elog();
 
  public:
-  static Elog &GetInst();
   void set_log_level(LogLevel log_level);
-  void set_log_file(const std::string& file_name);
   
-  template<typename... Args>
-  void log(const LogLevel log_level, Args... args);
+  // template<typename... Args>
+  // void log(const LogLevel log_level, Args... args);
   std::string get_log_level(LogLevel log_level);
+
+  void Log(const char* format, std::va_list ap);
  private:
   LogLevel log_level_;
-  std::ofstream log_file_;
   std::mutex log_mutex_;
+  std::FILE* fp_;
 };
 
-template<typename... Args>
-void Elog::log(const LogLevel log_level, Args... args)
-{
-  if (log_level < this->log_level_) return;
-  std::ostringstream oss;
+// template<typename... Args>
+// void Elog::log(const LogLevel log_level, Args... args)
+// {
+//   if (log_level < this->log_level_) return;
+//   std::ostringstream oss;
 
-  oss << "[" << ETime::GetInst().get_cur_time() << "] ";
-  oss << "[" << get_log_level(log_level) << "] ";
-  (oss << ... << args);
-  oss << std::endl;
-  {
-    std::unique_lock<std::mutex> lock(log_mutex_);
-    if(log_file_.is_open()){
-      log_file_ << oss.str();
-      log_file_.flush();
-      std::cerr << "log file is open\n";
-      if(log_file_.fail()){
-        std::cerr << "Failed to write to log file\n";
-      }
-    }
-  }
+//   oss << "[" << ETime::GetInst().get_cur_time() << "] ";
+//   oss << "[" << get_log_level(log_level) << "] ";
+//   (oss << ... << args);
+//   oss << std::endl;
+//   {
+//     std::unique_lock<std::mutex> lock(log_mutex_);
+//     if(log_file_.is_open()){
+//       log_file_ << oss.str();
+//       log_file_.flush();
+//       std::cerr << "log file is open\n";
+//       if(log_file_.fail()){
+//         std::cerr << "Failed to write to log file\n";
+//       }
+//     }
+//   }
 
-  std::cout << oss.str() << std::endl;
-}
+//   std::cout << oss.str() << std::endl;
+// }

@@ -2,7 +2,7 @@
  * @Author: Xudong0722
  * @Date: 2024-09-01 12:57:41
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2025-02-08 18:25:56
+ * @Last Modified time: 2025-02-22 16:53:58
  */
 
 #include <iostream>
@@ -12,10 +12,8 @@
 #include "Connection.h"
 #include "EventLoop.h"
 #include "Socket.h"
-#include "Elog.h"
 
 int main() {
-  Elog::GetInst().set_log_file("server.txt");  
   EventLoop *loop = new EventLoop();
   TcpServer *server = new TcpServer(loop);
 

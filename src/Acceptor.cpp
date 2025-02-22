@@ -2,7 +2,7 @@
  * @Author: Xudong0722
  * @Date: 2024-09-18 17:25:28
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-12-26 23:53:06
+ * @Last Modified time: 2025-02-23 02:17:44
  */
 
 #include "Acceptor.h"
@@ -12,7 +12,7 @@
 #include "EventLoop.h"
 #include "InetAddr.h"
 #include "Socket.h"
-#include "Elog.h"
+#include "Env.h"
 
 Acceptor::Acceptor(EventLoop *loop) : loop_(loop), sock_(nullptr), accept_channel_(nullptr) {
   InetAddr *addr_ = new InetAddr("127.0.0.1", 8888);
@@ -38,8 +38,8 @@ void Acceptor::accept_connection() {
   InetAddr *new_client_addr = new InetAddr;
   Socket *new_client_sock = new Socket(sock_->accept(new_client_addr));
 	
-  LOG(INFO, __FUNCTION__, ": new client fd: " , new_client_sock->get_fd(), " ip address: ", inet_ntoa(new_client_addr->addr_info_.sin_addr), " port: ", ntohs(new_client_addr->addr_info_.sin_port));
-
+  //LOG(INFO, __FUNCTION__, ": new client fd: " , new_client_sock->get_fd(), " ip address: ", inet_ntoa(new_client_addr->addr_info_.sin_addr), " port: ", ntohs(new_client_addr->addr_info_.sin_port));
+  Env::GetInst().Log("%s, new client sock:%d, new client addr:%s, new client port:%d.", __FUNCTION__, new_client_sock->get_fd(), inet_ntoa(new_client_addr->addr_info_.sin_addr), ntohs(new_client_addr->addr_info_.sin_port));
   new_client_sock->set_non_blocking();
   new_connection_callback_(new_client_sock);
   delete new_client_addr;

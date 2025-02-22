@@ -2,7 +2,7 @@
  * @Author: Xudong0722
  * @Date: 2024-09-09 23:00:21
  * @Last Modified by: Xudong0722
- * @Last Modified time: 2024-12-25 23:00:54
+ * @Last Modified time: 2025-02-22 16:47:12
  */
 
 #include "TcpServer.h"
@@ -15,6 +15,7 @@
 #include "InetAddr.h"
 #include "Socket.h"
 #include "ThreadPool.h"
+#include "Env.h"
 
 TcpServer::TcpServer(EventLoop *event_loop) : main_reactor_(event_loop) {
   acceptor_ = new Acceptor(main_reactor_);
@@ -33,6 +34,7 @@ TcpServer::TcpServer(EventLoop *event_loop) : main_reactor_(event_loop) {
     std::function<void()> sub_loop = std::bind(&EventLoop::loop, sub_reactors_[i]);
     thread_pool_->add(sub_loop);
   }
+
 }
 
 TcpServer::~TcpServer() {

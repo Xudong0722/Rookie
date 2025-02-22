@@ -7,10 +7,8 @@
 #include <iostream>
 #include "Connection.h"
 #include "Socket.h"
-#include "Elog.h"
 
 int main() {
-  Elog::GetInst().set_log_file("client.txt");
   Socket *sock = new Socket();
   sock->connect("127.0.0.1", 8888);
 
